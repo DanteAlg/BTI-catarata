@@ -4,10 +4,14 @@
 // Files
 #include "file_upload.h"
 
-int main() {
-  FILE *img;
+typedef struct Image {
+  FILE *file;
+} Image;
 
-  img = FileUpload();
+int main() {
+  Image img;
+
+  img.file = FileUpload();
   // Verificação de dados do arquivo
   // Transformar imagem em escala de cinza
   // Captura de dados da imagem

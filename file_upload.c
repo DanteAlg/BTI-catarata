@@ -1,5 +1,8 @@
 #include <stdio.h>
 
+// Formatos válidos
+enum FORMATS { ppm };
+
 /*
  * Verificação do conteudo do arquivo
 void Debug(FILE *file) {
@@ -37,12 +40,11 @@ FILE *FileUpload() {
   }
 
   // Criar arquivo temporário que possa ser alterado
-  tmp_file = fopen("tmp/olho.ppm", "w");
-
   printf("Copiando... ");
-  while( ( ch = fgetc(file) ) != EOF ) {
+  tmp_file = fopen("img_teste.ppm", "w");
+
+  while( ( ch = fgetc(file) ) != EOF )
     fputc(ch, tmp_file);
-  }
   printf("OK!\n");
 
   return tmp_file;
