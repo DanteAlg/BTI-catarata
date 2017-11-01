@@ -1,4 +1,4 @@
 #ifndef FILE_UPLOAD_H_
 #define FILE_UPLOAD_H_
-  FILE* FileUpload();
+  void UploadProccess(int **pixels, int *heigth, int *width);
 #endif
