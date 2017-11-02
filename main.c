@@ -1,15 +1,23 @@
 // Dependencies
+#include <stdlib.h>
 #include <stdio.h>
 
 // Files
 #include "file_methods.h"
 
 int main() {
-  int h, w, p;
-  int *heigth = &h, *width = &w, *pixels = &p;
+  int h, w;
+  int *heigth = &h, *width = &w;
+  FILE* file;
 
-  pixels = UploadProccess(pixels, heigth, width);
-  WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
+  file = UploadProccess(heigth, width);
+
+  int *pixels;
+
+  pixels = (int*)malloc(sizeof(int) * (*heigth) * (*width));
+
+  GrayScalePixels(file, *heigth, *width, pixels);
+  WritePPM(*heigth, *width, pixels, "eye_grayscale.pgm");
 
   printf("heigth: %d, width: %d, pixels: %p \n", *(heigth), *(width), pixels);
 
