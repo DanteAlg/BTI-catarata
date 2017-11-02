@@ -2,23 +2,16 @@
 #include <stdio.h>
 
 // Files
-#include "file_upload.h"
-
-typedef struct Image {
-  int *heigth;
-  int *width;
-  int **pixels;
-} Image;
+#include "file_methods.h"
 
 int main() {
-  int heigth, width;
-  Image img = { &heigth, &width };
+  int h, w, p;
+  int *heigth = &h, *width = &w, *pixels = &p;
 
-  UploadProccess(img.pixels, img.heigth, img.width);
+  pixels = UploadProccess(pixels, heigth, width);
+  WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
 
-  printf("heigth: %d, width: %d \n", *(img.heigth), *(img.width));
-  // Transformar imagem em escala de cinza
-  // Captura de dados da imagem
-  // Verficação da doença e porcentagem
+  printf("heigth: %d, width: %d, pixels: %p \n", *(heigth), *(width), pixels);
+
   return 0;
 }

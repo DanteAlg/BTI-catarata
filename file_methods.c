@@ -2,11 +2,9 @@
 #include <stdlib.h>
 
 // Gerar matriz de pixels da imagem em escala de cinza
-void grayScalePixels(FILE *file, int heigth, int width, int **pixels) {
-  int line, col, code;
+void grayScalePixels(FILE *file, int heigth, int width, int *pixels) {
   double pixelRGB, grayRGB[3] = { 0.3, 0.59, 0.11 };
-
-  pixels = (int **)malloc(sizeof(int*) * heigth * width);
+  int code, line, col;
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
@@ -15,17 +13,21 @@ void grayScalePixels(FILE *file, int heigth, int width, int **pixels) {
       // Escala por combinação linear https://capivararex.wordpress.com/2016/04/17/dip02-conversao-rgb-para-escala-de-cinza/
       // R: 0.3, G: 0.59, B: 0.11
       fscanf(file, "%d", &code);
-      pixelRGB += 0.3*code;
+      pixelRGB += grayRGB[0]*code;
 
       fscanf(file, "%d", &code);
-      pixelRGB += 0.59*code;
+      pixelRGB += grayRGB[1]*code;
 
       fscanf(file, "%d", &code);
-      pixelRGB += 0.11*code;
+      pixelRGB += grayRGB[2]*code;
 
-      pixels[line][col] = pixelRGB;
+     *(pixels + line*width + col) = (int) pixelRGB;
+
     }
   }
+
+  printf("Pixels: %p\n", pixels);
+
   return;
 }
 
@@ -46,13 +48,33 @@ void readPPMHeader(FILE *file, int *heigth, int *width) {
   fscanf(file, "%d", &max_color);
 }
 
+// Escreve um arquivo ppm a partir de uma matriz
+void WritePPM(int heigth, int width, int *pixels, char file_name[50]) {
+  FILE *file = fopen(file_name, "wb");
+  int line, col, pixel;
+
+  fprintf(file, "P3\n%d %d\n255\n", width, heigth);
+
+  for (line = 0; line < heigth; ++line) {
+    for (col = 0; col < width;  ++col) {
+     if (line < 1 && col < 5)
+      pixel = *(pixels + line * width + col);
+      fwrite(&pixel, sizeof(int), 1, file);
+    }
+  }
+
+  fclose(file);
+
+  return;
+}
+
 // Upload de arquivo e criação da matriz em preto e branco
-void UploadProccess(int **pixels, int *heigth, int *width) {
-  char file_name[30]; //file_format[5]
+void* UploadProccess(int *pixels, int *heigth, int *width) {
+  char file_name[30] = "images/Catarata.ppm"; //file_format[5]
   FILE *file;
 
   printf("Escreva o nome do arquivo: ");
-  scanf("%s", file_name);
+  //scanf("%s", file_name);
 
   // Carrega Arquivo de origem
   file = fopen(file_name, "rb");
@@ -67,7 +89,9 @@ void UploadProccess(int **pixels, int *heigth, int *width) {
   }
 
   readPPMHeader(file, heigth, width);
+  pixels = (int*)malloc(sizeof(int) * (*heigth) * (*width));
+
   grayScalePixels(file, *heigth, *width, pixels);
 
-  return;
+  return pixels;
 }

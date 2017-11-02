@@ -1,2 +1,2 @@
 all:
-	gcc main.c file_upload.c -o catarata -g -W
+	gcc main.c file_methods.c -o catarata -g -W
