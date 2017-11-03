@@ -20,11 +20,7 @@ void GrayScalePixels(FILE *file, int heigth, int width, int *pixels) {
       fscanf(file, "%d", &code);
       pixelRGB += grayRGB[2]*code;
 
-      *(pixels + line*width + col) = (int) pixelRGB;
-
-      if (col == 0 && line < 10)
-        printf("Ponto: %p\n", (pixels + line*width + col));
-
+      *(pixels + line * width + col) = (int) pixelRGB;
     }
   }
 
@@ -34,15 +30,13 @@ void GrayScalePixels(FILE *file, int heigth, int width, int *pixels) {
 // Escreve um arquivo ppm a partir de uma matriz
 void WritePPM(int heigth, int width, int *pixels, char file_name[50]) {
   FILE *file = fopen(file_name, "wb");
-  int line, col, pixel;
+  int line, col;
 
   fprintf(file, "P3\n%d %d\n255\n", width, heigth);
 
   for (line = 0; line < heigth; ++line) {
     for (col = 0; col < width;  ++col) {
-     if (line < 1 && col < 5)
-      pixel = *(pixels + line * width + col);
-      fprintf(file, "%d\n", pixel);
+      fprintf(file, "%d\n", *(pixels + line * width + col));
     }
   }
 

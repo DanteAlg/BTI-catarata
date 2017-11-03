@@ -12,11 +12,12 @@ int main() {
 
   file = UploadProccess(heigth, width);
 
-  int *pixels;
+  int *pixels =  (int*)malloc(sizeof(int) * (*heigth) * (*width));
 
-  pixels = (int*)malloc(sizeof(int) * (*heigth) * (*width));
+  free(pixels);
 
   GrayScalePixels(file, *heigth, *width, pixels);
+
   WritePPM(*heigth, *width, pixels, "eye_grayscale.pgm");
 
   printf("heigth: %d, width: %d, pixels: %p \n", *(heigth), *(width), pixels);
