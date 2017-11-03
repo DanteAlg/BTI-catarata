@@ -4,6 +4,7 @@
 
 // Files
 #include "file_methods.h"
+#include "image_proccess.h"
 
 int main() {
   int h, w;
@@ -20,7 +21,7 @@ int main() {
 
   WritePPM(*heigth, *width, pixels, "eye_grayscale.pgm");
 
-  printf("heigth: %d, width: %d, pixels: %p \n", *(heigth), *(width), pixels);
+  printf("heigth: %d, width: %d\n", *(heigth), *(width));
 
   return 0;
 }
