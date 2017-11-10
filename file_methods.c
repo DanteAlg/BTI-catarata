@@ -1,5 +1,23 @@
 #include <stdio.h>
 
+// [DEBUG] Gera uma matriz a partir de um arquivo ppm
+void MatrizPPM(FILE *file, int heigth, int width, int *pixels) {
+  int code, line, col;
+
+  for (line = 0; line < heigth; line++) {
+    for (col = 0; col < width; col++) {
+      fscanf(file, "%d", &code);
+      *(pixels + line * width + col) = code;
+
+      fscanf(file, "%d", &code);
+      *(pixels + line * width + col) = code;
+
+      fscanf(file, "%d", &code);
+      *(pixels + line * width + col) = code;
+    }
+  }
+}
+
 // Escreve um arquivo ppm a partir de uma matriz
 void WritePPM(int heigth, int width, int *pixels, char file_name[50]) {
   FILE *file = fopen(file_name, "wb");
@@ -9,6 +27,8 @@ void WritePPM(int heigth, int width, int *pixels, char file_name[50]) {
 
   for (line = 0; line < heigth; ++line) {
     for (col = 0; col < width;  ++col) {
+      fprintf(file, "%d\n", *(pixels + line * width + col));
+      fprintf(file, "%d\n", *(pixels + line * width + col));
       fprintf(file, "%d\n", *(pixels + line * width + col));
     }
   }
@@ -37,7 +57,7 @@ void readPPMHeader(FILE *file, int *heigth, int *width) {
 
 // Upload de arquivo e criação da matriz em preto e branco
 FILE* UploadProccess(int *heigth, int *width) {
-  char file_name[30] = "images/Catarata.ppm"; //file_format[5]
+  char file_name[30] = "images/Catarata2.ppm"; //file_format[5]
   FILE *file;
 
   printf("Escreva o nome do arquivo: ");

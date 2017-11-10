@@ -27,3 +27,64 @@ void GrayScalePixels(FILE *file, int heigth, int width, int *pixels) {
   return;
 }
 
+// Verifica se os dois pontos estão dentro do tamanho da imagem
+int imgLimit(int pos, int x, int ref) {
+  if (pos + x > 0 && pos + x <= ref)
+    return 1;
+
+  return 0;
+}
+
+
+// Utilizar o filtro de gauss para tirar os ruidos da imagem
+void GaussFilter(int heigth, int width, int *pixels) {
+  int line, col, pixelRGB;
+  int k_line, k_col;
+
+  // Kernel Gaussiano (Oferecido pelo material)
+  int kernel[5][5] = {
+    { 2,  4,  5,  4, 2 },
+    { 4,  9, 12,  9, 4 },
+    { 5, 12, 15, 12, 5 },
+    { 4,  9, 12,  9, 4 },
+    { 2,  4,  5,  4, 2 }
+  };
+
+  // Soma dos valores do kernel [peso] (Oferecido pelo material)
+  int gauss_weight = 159;
+
+  for (line = 0; line < heigth; line++) {
+    for (col = 0; col < width; col++) {
+      pixelRGB = 0;
+
+      for(k_line = -2; k_line < 2; k_line++ ) {
+        for( k_col = -2; k_col < 2; k_col++ ) {
+          if (imgLimit(line, k_line, heigth) == 1 && imgLimit(col, k_col, width) == 1)
+            pixelRGB += (*(pixels + (line*width + k_line) + (col + k_col))*kernel[k_line+2][k_col+2]);
+        }
+      }
+
+      *(pixels + line * width + col) = pixelRGB/gauss_weight;
+    }
+  }
+
+  return;
+}
+
+// Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)
+void Binarization(int heigth, int width, int *pixels) {
+  int line, col, trashold = 127;
+
+  for (line = 0; line < heigth; line++) {
+    for (col = 0; col < width; col++) {
+      if (*(pixels + line * width + col) > trashold) {
+        *(pixels + line * width + col) = 1;
+      }
+      else {
+        *(pixels + line * width + col) = 0;
+      }
+    }
+  }
+
+  return;
+}
