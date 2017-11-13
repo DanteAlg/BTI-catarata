@@ -10,6 +10,8 @@
 // OBS.: heigth e width que são passados pela imagem ppm são os valores do
 // tamanho da matriz final.
 
+// Argumentos em vetor de char quando inicializa o programa
+// https://stackoverflow.com/questions/2108192/what-are-the-valid-signatures-for-cs-main-function
 int main(int argc, char* argv[]) {
   int h, w;
   int *heigth = &h, *width = &w;

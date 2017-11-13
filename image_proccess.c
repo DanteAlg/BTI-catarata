@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 // Gerar matriz de pixels da imagem em escala de cinza
 void GrayScalePixels(FILE *file, int heigth, int width, int *pixels) {
@@ -35,12 +36,22 @@ int imgLimit(int pos, int x, int ref) {
   return 0;
 }
 
+void matrixToPointer(int heigth, int width, int res[heigth][width], int *pixels) {
+  int line, col;
+
+  for (line = 0; line < heigth; line++) {
+    for (col = 0; col < width; col++) {
+      *(pixels + line * width + col) = res[line][col];
+    }
+  }
+}
+
 
 // Utilizar o filtro de gauss para tirar os ruidos da imagem
-// TODO: Fix this method
 void GaussFilter(int heigth, int width, int *pixels) {
   int line, col, pixelRGB;
   int k_line, k_col;
+  int res[heigth][width];
 
   // Kernel Gaussiano (Oferecido pelo material)
   int kernel[5][5] = {
@@ -65,20 +76,23 @@ void GaussFilter(int heigth, int width, int *pixels) {
         }
       }
 
+      //res[line][col] = pixelRGB/gauss_weight;
       *(pixels + line * width + col) = pixelRGB/gauss_weight;
     }
   }
+
+  //matrixToPointer(heigth, width, res, pixels);
 
   return;
 }
 
 // Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)
 void Binarization(int heigth, int width, int *pixels) {
-  int line, col, trashold = 127;
+  int line, col, mid = 127;
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
-      if (*(pixels + line * width + col) > trashold) {
+      if (*(pixels + line * width + col) > mid) {
         *(pixels + line * width + col) = 255;
       }
       else {
@@ -88,4 +102,25 @@ void Binarization(int heigth, int width, int *pixels) {
   }
 
   return;
+}
+
+// Filtro de sobel com realsador de arestas
+// https://stackoverflow.com/questions/17815687/image-processing-implementing-sobel-filter
+void SobelFilter(int heigth, int width, int *pixels) {
+  int sobel_x[3][3] = {-1, 0, 1, -2, 0, 2, -1, 0, 1},
+      sobel_y[3][3] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
+
+  int line, col, sc, pixelX, pixelY, res[heigth][width];
+
+  for (line = 0; line < heigth; line++) {
+    for (col = 0; col < width; col++) {
+      pixelX = 0;
+      pixelY = 0;
+
+      for(sc = 0; sc < 3; sc++) {
+      }
+
+      res[line][col] = sqrt((pixelX * pixelX) + (pixelY * pixelY));
+    }
+  }
 }
