@@ -78,7 +78,7 @@ void Binarization(int heigth, int width, int *pixels) {
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
       if (*(pixels + line * width + col) > trashold) {
-        *(pixels + line * width + col) = 1;
+        *(pixels + line * width + col) = 255;
       }
       else {
         *(pixels + line * width + col) = 0;
