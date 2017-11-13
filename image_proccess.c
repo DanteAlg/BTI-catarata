@@ -37,6 +37,7 @@ int imgLimit(int pos, int x, int ref) {
 
 
 // Utilizar o filtro de gauss para tirar os ruidos da imagem
+// TODO: Fix this method
 void GaussFilter(int heigth, int width, int *pixels) {
   int line, col, pixelRGB;
   int k_line, k_col;
