@@ -76,12 +76,11 @@ void GaussFilter(int heigth, int width, int *pixels) {
         }
       }
 
-      //res[line][col] = pixelRGB/gauss_weight;
-      *(pixels + line * width + col) = pixelRGB/gauss_weight;
+      res[line][col] = pixelRGB/gauss_weight;
     }
   }
 
-  //matrixToPointer(heigth, width, res, pixels);
+  matrixToPointer(heigth, width, res, pixels);
 
   return;
 }
