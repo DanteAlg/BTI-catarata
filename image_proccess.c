@@ -117,7 +117,7 @@ void SobelFilter(int heigth, int width, int *pixels) {
       pixelX = sobelCovulation(sobel_x, line, col, width, pixels);
       pixelY = sobelCovulation(sobel_y, line, col, width, pixels);
 
-      res[line][col] = ceil(sqrt((pixelX * pixelX) + (pixelY * pixelY)));
+      res[line][col] = ceil(sqrt(pow(pixelX, 2) + pow(pixelY, 2)));
     }
   }
 
@@ -131,10 +131,10 @@ void Binarization(int heigth, int width, int *pixels) {
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
       if (*(pixels + line * width + col) > mid) {
-        *(pixels + line * width + col) = 255;
+        *(pixels + line * width + col) = 255; // Branco
       }
       else {
-        *(pixels + line * width + col) = 0;
+        *(pixels + line * width + col) = 0; // Preto
       }
     }
   }
