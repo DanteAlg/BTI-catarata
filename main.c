@@ -1,6 +1,7 @@
 // Dependencies
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 // Files
 #include "file_methods.h"
@@ -50,7 +51,7 @@ int main(int argc, char* argv[]) {
 
   FILE* file_res = fopen(argv[6], "w");
 
-  HoughTransformation(*heigth, *width, pixels, file_res);
+  //HoughTransformation(*heigth, *width, pixels, file_res);
 
   printf("heigth: %d, width: %d\n", *(heigth), *(width));
 
