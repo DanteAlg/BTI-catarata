@@ -31,6 +31,9 @@ int main(int argc, char* argv[]) {
   GaussFilter(*heigth, *width, pixels);
   WritePPM(*heigth, *width, pixels, "eye_gauss_filter.ppm");
 
+  SobelFilter(*heigth, *width, pixels);
+  WritePPM(*heigth, *width, pixels, "eye_sobel_filter.ppm");
+
   Binarization(*heigth, *width, pixels);
   WritePPM(*heigth, *width, pixels, "eye_binarization.ppm");
 

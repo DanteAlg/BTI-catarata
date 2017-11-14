@@ -57,7 +57,7 @@ void readPPMHeader(FILE *file, int *heigth, int *width) {
 
 // Upload de arquivo e criação da matriz em preto e branco
 FILE* UploadProccess(int *heigth, int *width) {
-  char file_name[30] = "images/Catarata2.ppm"; //file_format[5]
+  char file_name[30] = "images/Catarata.ppm"; //file_format[5]
   FILE *file;
 
   printf("Escreva o nome do arquivo: ");

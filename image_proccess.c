@@ -85,6 +85,45 @@ void GaussFilter(int heigth, int width, int *pixels) {
   return;
 }
 
+// Aplica a covulação no pixel para o calculo de Sobel
+int sobelCovulation(int sobel_v[3][3], int x, int y, int width, int *pixels) {
+  int l, c, res = 0;
+
+  int area[3][3] = { 
+    { *(pixels + (x - 1)*width + y - 1), *(pixels + x*width + y - 1), *(pixels + (x + 1)*width + y - 1) },
+    { *(pixels + (x - 1)*width + y), *(pixels + x*width + y), *(pixels + (x + 1)*width + y) },
+    { *(pixels + (x - 1)*width + y + 1), *(pixels + x*width + y + 1), *(pixels + (x + 1)*width + y + 1) }
+  };
+
+  for (l = 0; l < 3; l++) {
+    for (c = 0; c < 3; c++) {
+      res += sobel_v[l][c] * area[l][c];
+    }
+  }
+
+  return res;
+}
+
+// Filtro de sobel para realsar as arestas
+// https://stackoverflow.com/questions/17815687/image-processing-implementing-sobel-filter
+void SobelFilter(int heigth, int width, int *pixels) {
+  int sobel_x[3][3] = { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } },
+      sobel_y[3][3] = { {-1, 2, 1 }, { 0, 0, 0}, { -1, -2, -1 } };
+
+  int line, col, sc, pixelX, pixelY, res[heigth][width];
+
+  for (line = 1; line < (heigth - 2); line++) {
+    for (col = 1; col < (width - 2); col++) {
+      pixelX = sobelCovulation(sobel_x, line, col, width, pixels);
+      pixelY = sobelCovulation(sobel_y, line, col, width, pixels);
+
+      res[line][col] = ceil(sqrt((pixelX * pixelX) + (pixelY * pixelY)));
+    }
+  }
+
+  matrixToPointer(heigth, width, res, pixels);
+}
+
 // Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)
 void Binarization(int heigth, int width, int *pixels) {
   int line, col, mid = 127;
@@ -103,23 +142,3 @@ void Binarization(int heigth, int width, int *pixels) {
   return;
 }
 
-// Filtro de sobel com realsador de arestas
-// https://stackoverflow.com/questions/17815687/image-processing-implementing-sobel-filter
-void SobelFilter(int heigth, int width, int *pixels) {
-  int sobel_x[3][3] = {-1, 0, 1, -2, 0, 2, -1, 0, 1},
-      sobel_y[3][3] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
-
-  int line, col, sc, pixelX, pixelY, res[heigth][width];
-
-  for (line = 0; line < heigth; line++) {
-    for (col = 0; col < width; col++) {
-      pixelX = 0;
-      pixelY = 0;
-
-      for(sc = 0; sc < 3; sc++) {
-      }
-
-      res[line][col] = sqrt((pixelX * pixelX) + (pixelY * pixelY));
-    }
-  }
-}
