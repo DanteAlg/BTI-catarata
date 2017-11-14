@@ -13,11 +13,20 @@
 // Argumentos em vetor de char quando inicializa o programa
 // https://stackoverflow.com/questions/2108192/what-are-the-valid-signatures-for-cs-main-function
 int main(int argc, char* argv[]) {
+  if (argc != 7) {
+    printf("Por favor, passe os parametros -i -f -o\n");
+    return -1;
+  }
+
   int h, w;
   int *heigth = &h, *width = &w;
+  char file_name[50], file_format[10];
   FILE* file;
 
-  file = UploadProccess(heigth, width);
+  strcpy(file_name, argv[2]);
+  strcpy(file_format, argv[4]);
+
+  file = UploadProccess(heigth, width, file_name);
 
   int *pixels =  (int*)malloc(sizeof(int) * (*heigth) * (*width));
 
@@ -37,7 +46,11 @@ int main(int argc, char* argv[]) {
   Binarization(*heigth, *width, pixels);
   WritePPM(*heigth, *width, pixels, "eye_binarization.ppm");
 
-  HoughTransformation(*heigth, *width, pixels);
+  // Encontrar circulos e gerar resultados
+
+  FILE* file_res = fopen(argv[6], "w");
+
+  HoughTransformation(*heigth, *width, pixels, file_res);
 
   printf("heigth: %d, width: %d\n", *(heigth), *(width));
 

@@ -118,6 +118,9 @@ void SobelFilter(int heigth, int width, int *pixels) {
       pixelY = sobelCovulation(sobel_y, line, col, width, pixels);
 
       res[line][col] = ceil(sqrt(pow(pixelX, 2) + pow(pixelY, 2)));
+
+      if (res[line][col] > 255)
+        res[line][col] = 255;
     }
   }
 
