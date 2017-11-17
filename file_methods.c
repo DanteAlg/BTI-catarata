@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "structs.h"
+
 // [DEBUG] Gera uma matriz a partir de um arquivo ppm
 void MatrizPPM(FILE *file, int heigth, int width, int *pixels) {
   int code, line, col;
@@ -19,17 +21,20 @@ void MatrizPPM(FILE *file, int heigth, int width, int *pixels) {
 }
 
 // Escreve um arquivo ppm a partir de uma matriz
-void WritePPM(int heigth, int width, int *pixels, char file_name[50]) {
+void WritePPM(int heigth, int width, PixelRGB *pixels, char file_name[50]) {
   FILE *file = fopen(file_name, "wb");
+  PixelRGB pixel;
   int line, col;
 
   fprintf(file, "P3\n%d %d\n255\n", width, heigth);
 
   for (line = 0; line < heigth; ++line) {
     for (col = 0; col < width;  ++col) {
-      fprintf(file, "%d\n", *(pixels + line * width + col));
-      fprintf(file, "%d\n", *(pixels + line * width + col));
-      fprintf(file, "%d\n", *(pixels + line * width + col));
+      pixel = *(pixels + line * width + col);
+
+      fprintf(file, "%d\n", pixel.r);
+      fprintf(file, "%d\n", pixel.g);
+      fprintf(file, "%d\n", pixel.b);
     }
   }
 

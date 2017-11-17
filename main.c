@@ -4,6 +4,7 @@
 #include <string.h>
 
 // Files
+#include "structs.h"
 #include "file_methods.h"
 #include "image_proccess.h"
 #include "image_magnitude.h"
@@ -29,13 +30,13 @@ int main(int argc, char* argv[]) {
 
   file = UploadProccess(heigth, width, file_name);
 
-  int *pixels =  (int*)malloc(sizeof(int) * (*heigth) * (*width));
+  PixelRGB *pixels =  (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
 
   free(pixels);
 
   // Processamento da matriz da imagem
 
-  GrayScalePixels(file, *heigth, *width, pixels);
+  GrayScalePixels(file, *heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
 
   GaussFilter(*heigth, *width, pixels);

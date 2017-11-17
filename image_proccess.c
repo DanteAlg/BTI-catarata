@@ -1,27 +1,34 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "structs.h"
+
 // Gerar matriz de pixels da imagem em escala de cinza
-void GrayScalePixels(FILE *file, int heigth, int width, int *pixels) {
-  double pixelRGB, grayRGB[3] = { 0.3, 0.59, 0.11 };
+void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels) {
+  PixelRGB pixelRGB;
+  double pixel, grayRGB[3] = { 0.3, 0.59, 0.11 };
   int code, line, col;
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
-      pixelRGB = 0;
+      pixel = 0;
 
       // Escala por combinação linear https://capivararex.wordpress.com/2016/04/17/dip02-conversao-rgb-para-escala-de-cinza/
       // R: 0.3, G: 0.59, B: 0.11
       fscanf(file, "%d", &code);
-      pixelRGB += grayRGB[0]*code;
+      pixel += grayRGB[0]*code;
 
       fscanf(file, "%d", &code);
-      pixelRGB += grayRGB[1]*code;
+      pixel += grayRGB[1]*code;
 
       fscanf(file, "%d", &code);
-      pixelRGB += grayRGB[2]*code;
+      pixel += grayRGB[2]*code;
 
-      *(pixels + line * width + col) = (int) pixelRGB;
+      pixelRGB.r = pixel;
+      pixelRGB.g = pixel;
+      pixelRGB.b = pixel;
+
+      *(pixels + line * width + col) = pixelRGB;
     }
   }
 
@@ -36,22 +43,28 @@ int imgLimit(int pos, int x, int ref) {
   return 0;
 }
 
-void matrixToPointer(int heigth, int width, int res[heigth][width], int *pixels) {
+void matrixToPointer(int heigth, int width, PixelRGB res[heigth][width], PixelRGB *pixels) {
   int line, col;
+  PixelRGB pixel;
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
-      *(pixels + line * width + col) = res[line][col];
+      pixel = *(pixels + line * width + col);
+      pixel.r = res[line][col].r;
+      pixel.g = res[line][col].g;
+      pixel.b = res[line][col].b;
+
+      *(pixels + line * width + col) = pixel;
     }
   }
 }
 
 
 // Utilizar o filtro de gauss para tirar os ruidos da imagem
-void GaussFilter(int heigth, int width, int *pixels) {
-  int line, col, pixelRGB;
+void GaussFilter(int heigth, int width, PixelRGB *pixels) {
+  int line, col, pixel;
   int k_line, k_col;
-  int res[heigth][width];
+  PixelRGB pixelRGB, res[heigth][width];
 
   // Kernel Gaussiano (Oferecido pelo material)
   int kernel[5][5] = {
@@ -67,16 +80,20 @@ void GaussFilter(int heigth, int width, int *pixels) {
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
-      pixelRGB = 0;
+      pixel = 0;
 
       for(k_line = -2; k_line < 2; k_line++ ) {
         for( k_col = -2; k_col < 2; k_col++ ) {
           if (imgLimit(line, k_line, heigth) == 1 && imgLimit(col, k_col, width) == 1)
-            pixelRGB += (*(pixels + (line*width + k_line) + (col + k_col))*kernel[k_line+2][k_col+2]);
+            pixelRGB = *(pixels + (line*width + k_line) + (col + k_col));
+
+            pixel += (pixelRGB.r)*kernel[k_line+2][k_col+2];
         }
       }
 
-      res[line][col] = pixelRGB/gauss_weight;
+      res[line][col].r = pixel/gauss_weight;
+      res[line][col].g = res[line][col].r;
+      res[line][col].b = res[line][col].r;
     }
   }
 
@@ -86,10 +103,12 @@ void GaussFilter(int heigth, int width, int *pixels) {
 }
 
 // Aplica a covulação no pixel para o calculo de Sobel
-int sobelCovulation(int sobel_v[3][3], int x, int y, int width, int *pixels) {
+int sobelCovulation(int sobel_v[3][3], int x, int y, int width, PixelRGB *pixels) {
+  PixelRGB pixel;
   int l, c, res = 0;
 
-  int area[3][3] = { 
+  // Apenas localiza os pixels RGB
+  PixelRGB area[3][3] = {
     { *(pixels + (x - 1)*width + y - 1), *(pixels + x*width + y - 1), *(pixels + (x + 1)*width + y - 1) },
     { *(pixels + (x - 1)*width + y), *(pixels + x*width + y), *(pixels + (x + 1)*width + y) },
     { *(pixels + (x - 1)*width + y + 1), *(pixels + x*width + y + 1), *(pixels + (x + 1)*width + y + 1) }
@@ -97,7 +116,9 @@ int sobelCovulation(int sobel_v[3][3], int x, int y, int width, int *pixels) {
 
   for (l = 0; l < 3; l++) {
     for (c = 0; c < 3; c++) {
-      res += sobel_v[l][c] * area[l][c];
+      pixel = area[l][c];
+
+      res += sobel_v[l][c]*pixel.r;
     }
   }
 
@@ -106,21 +127,21 @@ int sobelCovulation(int sobel_v[3][3], int x, int y, int width, int *pixels) {
 
 // Filtro de sobel para realsar as arestas
 // https://stackoverflow.com/questions/17815687/image-processing-implementing-sobel-filter
-void SobelFilter(int heigth, int width, int *pixels) {
+void SobelFilter(int heigth, int width, PixelRGB *pixels) {
   int sobel_x[3][3] = { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } },
-      sobel_y[3][3] = { {-1, 2, 1 }, { 0, 0, 0}, { -1, -2, -1 } };
+      sobel_y[3][3] = { {1, 2, 1 }, { 0, 0, 0}, { -1, -2, -1 } };
 
-  int line, col, sc, pixelX, pixelY, res[heigth][width];
+  int line, col, sc, pixelX, pixelY;
+  PixelRGB res[heigth][width];
 
   for (line = 1; line < (heigth - 2); line++) {
     for (col = 1; col < (width - 2); col++) {
       pixelX = sobelCovulation(sobel_x, line, col, width, pixels);
       pixelY = sobelCovulation(sobel_y, line, col, width, pixels);
 
-      res[line][col] = ceil(sqrt(pow(pixelX, 2) + pow(pixelY, 2)));
-
-      if (res[line][col] > 255)
-        res[line][col] = 255;
+      res[line][col].r = ceil(sqrt(pow(pixelX, 2) + pow(pixelY, 2)));
+      res[line][col].g = res[line][col].r;
+      res[line][col].b = res[line][col].r;
     }
   }
 
@@ -128,17 +149,26 @@ void SobelFilter(int heigth, int width, int *pixels) {
 }
 
 // Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)
-void Binarization(int heigth, int width, int *pixels) {
-  int line, col, mid = 127;
+void Binarization(int heigth, int width, PixelRGB *pixels) {
+  int line, col, mid = 20;
+  PixelRGB pixel;
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
-      if (*(pixels + line * width + col) > mid) {
-        *(pixels + line * width + col) = 255; // Branco
+      pixel = *(pixels + line * width + col);
+
+      if (pixel.r > mid) {
+        pixel.r = 255; // Branco
+        pixel.g = 255; // Branco
+        pixel.b = 255; // Branco
       }
       else {
-        *(pixels + line * width + col) = 0; // Preto
+        pixel.r = 0; // Preto
+        pixel.g = 0; // Preto
+        pixel.b = 0; // Preto
       }
+
+      *(pixels + line * width + col) = pixel;
     }
   }
 

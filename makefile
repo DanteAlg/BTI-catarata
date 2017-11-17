@@ -1,10 +1,10 @@
 all:
-	gcc main.c file_methods.c image_proccess.c image_magnitude.c -o catarata -g -W
+	gcc main.c structs.c file_methods.c image_proccess.c image_magnitude.c -o catarata -g -W
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
 
-catarata:
+test:
 	./catarata -i images/Catarata.ppm -f ppm -o diagnostico.txt
 
 catarata2:
