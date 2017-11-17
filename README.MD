@@ -3,7 +3,12 @@
 ## Dependências
 - gcc
 
-## Compilar e rodar o código
+## Compilar o Código
 - make
-- ./catarata
+
+## Rodar com as imagens existentes no diretório
+- make test
+- make catarata2
+- make normal
+- make normal2
 
