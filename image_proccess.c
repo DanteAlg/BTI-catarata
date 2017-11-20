@@ -46,7 +46,7 @@ int imgLimit(int pos, int x, int ref) {
   return 0;
 }
 
-void matrixToPointer(int heigth, int width, PixelRGB res[heigth][width], PixelRGB *pixels) {
+void MatrixToPointer(int heigth, int width, PixelRGB res[heigth][width], PixelRGB *pixels) {
   int line, col;
   PixelRGB pixel;
 
@@ -100,7 +100,7 @@ void GaussFilter(int heigth, int width, PixelRGB *pixels) {
     }
   }
 
-  matrixToPointer(heigth, width, res, pixels);
+  MatrixToPointer(heigth, width, res, pixels);
 
   return;
 }
@@ -148,7 +148,7 @@ void SobelFilter(int heigth, int width, PixelRGB *pixels) {
     }
   }
 
-  matrixToPointer(heigth, width, res, pixels);
+ MatrixToPointer(heigth, width, res, pixels);
 }
 
 // Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)

@@ -5,10 +5,11 @@
 #define Black 0
 
 #include "structs.h"
+#include "image_proccess.h"
 
 // Verificar as formas circulares do olho e escrever o arquivo de resultado
 void HoughTransformation(int heigth, int width, PixelRGB *pixels, FILE *file) {
-  int line, col, theta;
+  int line, col, theta, m_line, m_col;
   PixelRGB pixel, matrix[heigth][width];
 
   for (line = 0; line < heigth; ++line) {
