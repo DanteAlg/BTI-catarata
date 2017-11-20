@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#define Black 0
+#define White 255
+
 #include "structs.h"
 
 // Gerar matriz de pixels da imagem em escala de cinza
@@ -158,14 +161,14 @@ void Binarization(int heigth, int width, PixelRGB *pixels) {
       pixel = *(pixels + line * width + col);
 
       if (pixel.r > mid) {
-        pixel.r = 255; // Branco
-        pixel.g = 255; // Branco
-        pixel.b = 255; // Branco
+        pixel.r = White;
+        pixel.g = White;
+        pixel.b = White;
       }
       else {
-        pixel.r = 0; // Preto
-        pixel.g = 0; // Preto
-        pixel.b = 0; // Preto
+        pixel.r = Black;
+        pixel.g = Black;
+        pixel.b = Black;
       }
 
       *(pixels + line * width + col) = pixel;

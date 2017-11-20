@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   strcpy(file_name, argv[2]);
   strcpy(file_format, argv[4]);
 
-  file = UploadProccess(heigth, width, file_name);
+  file = UploadProccess(heigth, width, file_name); // OK
 
   PixelRGB *pixels =  (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
 
@@ -39,13 +39,13 @@ int main(int argc, char* argv[]) {
   GrayScalePixels(file, *heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
 
-  GaussFilter(*heigth, *width, pixels);
+  GaussFilter(*heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_gauss_filter.ppm");
 
-  SobelFilter(*heigth, *width, pixels);
+  SobelFilter(*heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_sobel_filter.ppm");
 
-  Binarization(*heigth, *width, pixels);
+  Binarization(*heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_binarization.ppm");
 
   // Encontrar circulos e gerar resultados
