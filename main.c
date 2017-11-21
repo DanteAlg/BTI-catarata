@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 
   file = UploadProccess(heigth, width, file_name); // OK
 
-  PixelRGB *pixels =  (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
+  PixelRGB *pixels = (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
 
   free(pixels);
 
