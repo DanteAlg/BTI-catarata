@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
   FILE* file_res = fopen(argv[6], "w");
 
-  //HoughTransformation(*heigth, *width, pixels, file_res);
+  HoughTransformation(*heigth, *width, pixels, file_res);
 
   printf("heigth: %d, width: %d\n", *(heigth), *(width));
 
