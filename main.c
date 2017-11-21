@@ -51,8 +51,9 @@ int main(int argc, char* argv[]) {
   // Encontrar circulos e gerar resultados
 
   FILE* file_res = fopen(argv[6], "w");
+  int *hough;
 
-  HoughTransformation(*heigth, *width, pixels, file_res);
+  HoughTransformation(*heigth, *width, pixels, hough);
 
   printf("heigth: %d, width: %d\n", *(heigth), *(width));
 

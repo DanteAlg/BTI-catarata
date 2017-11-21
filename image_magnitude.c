@@ -17,18 +17,17 @@ int maxRadius(int heigth, int width) {
 }
 
 // Verificar as formas circulares do olho e escrever o arquivo de resultado
-void HoughTransformation(int heigth, int width, PixelRGB *pixels, FILE *file) {
+void HoughTransformation(int heigth, int width, PixelRGB *pixels, int *hough) {
   int line, col, theta, radius, hough_x, hough_y;
   // Para cada pixel verificar se forma um possivel círculo,
   // verificar do raio min ao max
-  int min_radius = 120;
   int max_radius = maxRadius(heigth, width);
-  int *hough;
-
-  PixelRGB pixel;
+  int min_radius = 120;
 
   // Inicializar o espaço de hough com valores zerados
   hough = realloc(hough, sizeof(int)*heigth*width*max_radius);
+
+  PixelRGB pixel;
 
   printf("Rodando segmentação da imagem... ");
   printf("Aguarde...\n");
@@ -52,8 +51,5 @@ void HoughTransformation(int heigth, int width, PixelRGB *pixels, FILE *file) {
       }
     }
   }
-
-  fprintf(file, "a) Diagnóstico Geral: \n");
-  fprintf(file, "b) Porcentagem de Comprometimento: \n");
 }
 
