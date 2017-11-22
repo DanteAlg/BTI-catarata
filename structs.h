@@ -5,5 +5,12 @@
     int g;
     int b;
   } PixelRGB;
+
+  typedef struct HoughObj {
+    int line;
+    int col;
+    int value;
+    int radius;
+  } HoughObj;
 #endif
 

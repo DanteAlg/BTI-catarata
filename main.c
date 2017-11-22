@@ -31,12 +31,13 @@ int main(int argc, char* argv[]) {
   file = UploadProccess(heigth, width, file_name); // OK
 
   PixelRGB *pixels = (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
+  PixelRGB *original = (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
 
   free(pixels);
 
   // Processamento da matriz da imagem
 
-  GrayScalePixels(file, *heigth, *width, pixels); // OK
+  GrayScalePixels(file, *heigth, *width, pixels, original); // OK
   WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
 
   GaussFilter(*heigth, *width, pixels); // OK
@@ -51,9 +52,10 @@ int main(int argc, char* argv[]) {
   // Encontrar circulos e gerar resultados
 
   FILE* file_res = fopen(argv[6], "w");
-  int *hough;
+  HoughObj center = HoughTransformation(*heigth, *width, pixels);
 
-  HoughTransformation(*heigth, *width, pixels, hough);
+  printf("Maior valor: %d, X: %d Y: %d RAIO: %d\n", center.value, center.line, center.col, center.radius);
+  SegmentedWritePPM(*heigth, *width, center, original, "Segmentation_test.ppm");
 
   printf("heigth: %d, width: %d\n", *(heigth), *(width));
 

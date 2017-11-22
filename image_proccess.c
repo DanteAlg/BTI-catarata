@@ -7,8 +7,8 @@
 #include "structs.h"
 
 // Gerar matriz de pixels da imagem em escala de cinza
-void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels) {
-  PixelRGB pixelRGB;
+void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels, PixelRGB *original) {
+  PixelRGB pixelRGB, originalRGB;
   double pixel, grayRGB[3] = { 0.3, 0.59, 0.11 };
   int code, line, col;
 
@@ -19,12 +19,15 @@ void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels) {
       // Escala por combinação linear https://capivararex.wordpress.com/2016/04/17/dip02-conversao-rgb-para-escala-de-cinza/
       // R: 0.3, G: 0.59, B: 0.11
       fscanf(file, "%d", &code);
+      originalRGB.r = code;
       pixel += grayRGB[0]*code;
 
       fscanf(file, "%d", &code);
+      originalRGB.g = code;
       pixel += grayRGB[1]*code;
 
       fscanf(file, "%d", &code);
+      originalRGB.b = code;
       pixel += grayRGB[2]*code;
 
       pixelRGB.r = pixel;
@@ -32,10 +35,9 @@ void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels) {
       pixelRGB.b = pixel;
 
       *(pixels + line * width + col) = pixelRGB;
+      *(original + line * width + col) = originalRGB;
     }
   }
-
-  return;
 }
 
 // Verifica se os dois pontos estão dentro do tamanho da imagem
@@ -69,28 +71,29 @@ void GaussFilter(int heigth, int width, PixelRGB *pixels) {
   int k_line, k_col;
   PixelRGB pixelRGB, res[heigth][width];
 
-  // Kernel Gaussiano (Oferecido pelo material)
+  // Kernel Gaussiano
   int kernel[5][5] = {
-    { 2,  4,  5,  4, 2 },
-    { 4,  9, 12,  9, 4 },
-    { 5, 12, 15, 12, 5 },
-    { 4,  9, 12,  9, 4 },
-    { 2,  4,  5,  4, 2 }
+    { 1,  4,  6,  4, 1 },
+    { 4, 16, 24, 16, 4 },
+    { 6, 24, 36, 24, 6 },
+    { 4, 16, 24, 16, 4 },
+    { 1,  4,  6,  4, 1 }
   };
 
-  // Soma dos valores do kernel [peso] (Oferecido pelo material)
-  int gauss_weight = 159;
+  // Soma dos valores do kernel [peso]
+  int gauss_weight = 256;
+  int interate = 2;
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
       pixel = 0;
 
-      for(k_line = -2; k_line < 2; k_line++ ) {
-        for( k_col = -2; k_col < 2; k_col++ ) {
-          if (imgLimit(line, k_line, heigth) == 1 && imgLimit(col, k_col, width) == 1)
-            pixelRGB = *(pixels + (line*width + k_line) + (col + k_col));
-
-            pixel += (pixelRGB.r)*kernel[k_line+2][k_col+2];
+      for(k_line = -interate; k_line < interate; k_line++ ) {
+        for( k_col = -interate; k_col < interate; k_col++ ) {
+          if (imgLimit(line, k_line, heigth) == 1 && imgLimit(col, k_col, width) == 1) {
+            pixelRGB = *(pixels + (line + k_line)*width + (col + k_col));
+            pixel += (pixelRGB.r)*kernel[k_line+interate][k_col+interate];
+          }
         }
       }
 

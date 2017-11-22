@@ -1,6 +1,9 @@
 #include <stdio.h>
 
 #include "structs.h"
+#include <math.h>
+
+#define PI 3.14159265
 
 // [DEBUG] Gera uma matriz a partir de um arquivo ppm
 void MatrizPPM(FILE *file, int heigth, int width, int *pixels) {
@@ -40,6 +43,53 @@ void WritePPM(int heigth, int width, PixelRGB *pixels, char file_name[50]) {
 
   fclose(file);
 
+  return;
+}
+
+void cropTrash(HoughObj center, int heigth, int width, PixelRGB *pixels) {
+  int line, col;
+  int max_x, min_x;
+  int max_y, min_y;
+
+  PixelRGB pixel;
+
+  min_x = (int) (center.line + center.radius * cos(90 * PI/180));
+  max_x = (int) (center.line + center.radius * cos(270 * PI/180));
+
+  min_y = (int) (center.col + center.radius * sin(0 * PI/180));
+  max_y = (int) (center.col + center.radius * sin(180 * PI/180));
+
+  for (line = 0; line < heigth; ++line) {
+    for (col = 0; col < width;  ++col) {
+      if (line > max_x) {
+        pixel = *(pixels + line*width + col);
+        pixel.r = 0;
+        pixel.g = 0;
+        pixel.b = 0;
+        *(pixels + line*width + col) = pixel;
+      }
+    }
+  }
+}
+
+void SegmentedWritePPM(int heigth, int width, HoughObj center, PixelRGB *pixels, char file_name[50]) {
+  int theta, x, y, line, col;
+  PixelRGB pixel;
+
+  //cropTrash(center, heigth, width, pixels);
+
+  for(theta = 0; theta <= 360; theta++) {
+    x = (int) (center.line + center.radius * cos(theta * PI/180));
+    y = (int) (center.col + center.radius * sin(theta * PI/180));
+
+    pixel = *(pixels + x*width + y);
+    pixel.r = 255;
+    pixel.g = 0;
+    pixel.b = 0;
+    *(pixels + x*width + y) = pixel;
+  }
+
+  WritePPM(heigth, width, pixels, file_name);
   return;
 }
 
