@@ -14,6 +14,11 @@
 
 // Argumentos em vetor de char quando inicializa o programa
 // https://stackoverflow.com/questions/2108192/what-are-the-valid-signatures-for-cs-main-function
+
+// TODO:
+// - Colocar maior peso em Hough
+// - Melhorar a média da binarização para deixar mais automatico
+// - Como fazer a ultima parte de detecção da catarata
 int main(int argc, char* argv[]) {
   if (argc != 7) {
     printf("Por favor, passe os parametros -i -f -o\n");
@@ -51,13 +56,17 @@ int main(int argc, char* argv[]) {
 
   // Encontrar circulos e gerar resultados
 
-  FILE* file_res = fopen(argv[6], "w");
-  HoughObj center = HoughTransformation(*heigth, *width, pixels);
+  HoughObj *center = HoughTransformation(*heigth, *width, pixels);
 
-  printf("Maior valor: %d, X: %d Y: %d RAIO: %d\n", center.value, center.line, center.col, center.radius);
-  SegmentedWritePPM(*heigth, *width, center, original, "Segmentation_test.ppm");
+  SegmentedWritePPM(*heigth, *width, *center, original, "eye_segmented.ppm");
 
-  printf("heigth: %d, width: %d\n", *(heigth), *(width));
+  double disease_perc = CalculateDiseasePercentual(*heigth, *width, center, original);
+
+  WriteResults(disease_perc, argv[6]);
+
+  // Debuggers
+  printf("X: %d Y: %d RAIO: %d\n", center->line, center->col, center->radius);
+  printf("heigth: %d, width: %d, pontos com catarata %0.2f\n", *(heigth), *(width), disease_perc);
 
   return 0;
 }

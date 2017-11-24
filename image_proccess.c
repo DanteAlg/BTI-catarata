@@ -19,20 +19,21 @@ void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels, PixelR
       // Escala por combinação linear https://capivararex.wordpress.com/2016/04/17/dip02-conversao-rgb-para-escala-de-cinza/
       // R: 0.3, G: 0.59, B: 0.11
       fscanf(file, "%d", &code);
-      originalRGB.r = code;
       pixel += grayRGB[0]*code;
 
       fscanf(file, "%d", &code);
-      originalRGB.g = code;
       pixel += grayRGB[1]*code;
 
       fscanf(file, "%d", &code);
-      originalRGB.b = code;
       pixel += grayRGB[2]*code;
 
       pixelRGB.r = pixel;
       pixelRGB.g = pixel;
       pixelRGB.b = pixel;
+
+      originalRGB.r = pixel;
+      originalRGB.g = pixel;
+      originalRGB.b = pixel;
 
       *(pixels + line * width + col) = pixelRGB;
       *(original + line * width + col) = originalRGB;
@@ -156,7 +157,7 @@ void SobelFilter(int heigth, int width, PixelRGB *pixels) {
 
 // Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)
 void Binarization(int heigth, int width, PixelRGB *pixels) {
-  int line, col, mid = 20;
+  int line, col, mid = 30;
   PixelRGB pixel;
 
   for (line = 0; line < heigth; line++) {

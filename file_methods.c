@@ -23,6 +23,22 @@ void MatrizPPM(FILE *file, int heigth, int width, int *pixels) {
   }
 }
 
+void WriteResults(double percent, char file_name[50]) {
+  FILE* file = fopen(file_name, "w");
+  double trashold = 10;
+
+  if (percent > trashold) {
+    fprintf(file, "a) Diagnóstico Geral: %s\n", "Com catarata");
+  }
+  else {
+    fprintf(file, "a) Diagnóstico Geral: %s\n", "Sem catarata");
+  }
+
+  fprintf(file, "b) Porcentagem de comprometimento: %0.2f \n", percent);
+
+  fclose(file);
+}
+
 // Escreve um arquivo ppm a partir de uma matriz
 void WritePPM(int heigth, int width, PixelRGB *pixels, char file_name[50]) {
   FILE *file = fopen(file_name, "wb");
@@ -46,22 +62,18 @@ void WritePPM(int heigth, int width, PixelRGB *pixels, char file_name[50]) {
   return;
 }
 
+// Relação de um ponto com uma circuferencia http://www.macoratti.net/14/05/c_vpc1.htm
+// Transforma tudo fora da circuferencia em preto
 void cropTrash(HoughObj center, int heigth, int width, PixelRGB *pixels) {
-  int line, col;
-  int max_x, min_x;
-  int max_y, min_y;
-
+  int line, col, dx, dy;
   PixelRGB pixel;
-
-  min_x = (int) (center.line + center.radius * cos(90 * PI/180));
-  max_x = (int) (center.line + center.radius * cos(270 * PI/180));
-
-  min_y = (int) (center.col + center.radius * sin(0 * PI/180));
-  max_y = (int) (center.col + center.radius * sin(180 * PI/180));
 
   for (line = 0; line < heigth; ++line) {
     for (col = 0; col < width;  ++col) {
-      if (line > max_x) {
+      dx = pow(center.line - line, 2);
+      dy = pow(center.col - col, 2);
+
+      if (dx + dy > pow(center.radius, 2)) {
         pixel = *(pixels + line*width + col);
         pixel.r = 0;
         pixel.g = 0;
@@ -76,18 +88,7 @@ void SegmentedWritePPM(int heigth, int width, HoughObj center, PixelRGB *pixels,
   int theta, x, y, line, col;
   PixelRGB pixel;
 
-  //cropTrash(center, heigth, width, pixels);
-
-  for(theta = 0; theta <= 360; theta++) {
-    x = (int) (center.line + center.radius * cos(theta * PI/180));
-    y = (int) (center.col + center.radius * sin(theta * PI/180));
-
-    pixel = *(pixels + x*width + y);
-    pixel.r = 255;
-    pixel.g = 0;
-    pixel.b = 0;
-    *(pixels + x*width + y) = pixel;
-  }
+  cropTrash(center, heigth, width, pixels);
 
   WritePPM(heigth, width, pixels, file_name);
   return;
