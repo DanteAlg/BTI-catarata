@@ -18,7 +18,7 @@
 // TODO:
 // - Colocar maior peso em Hough
 // - Melhorar a média da binarização para deixar mais automatico
-// - Como fazer a ultima parte de detecção da catarata
+// - Possivel valor de trashold aceitável para as imagens
 int main(int argc, char* argv[]) {
   if (argc != 7) {
     printf("Por favor, passe os parametros -i -f -o\n");

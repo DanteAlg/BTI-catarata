@@ -83,6 +83,7 @@ void GaussFilter(int heigth, int width, PixelRGB *pixels) {
 
   // Soma dos valores do kernel [peso]
   int gauss_weight = 256;
+  // variável que percorre o gradiente do kernel na matriz
   int interate = 2;
 
   for (line = 0; line < heigth; line++) {
@@ -178,7 +179,5 @@ void Binarization(int heigth, int width, PixelRGB *pixels) {
       *(pixels + line * width + col) = pixel;
     }
   }
-
-  return;
 }
 
