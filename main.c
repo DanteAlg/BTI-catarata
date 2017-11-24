@@ -26,7 +26,9 @@ int main(int argc, char* argv[]) {
   }
 
   int h, w;
+  double d, m;
   int *heigth = &h, *width = &w;
+  double *deviation = &d, *median = &m;
   char file_name[50], file_format[10];
   FILE* file;
 
@@ -42,11 +44,15 @@ int main(int argc, char* argv[]) {
 
   // Processamento da matriz da imagem
 
-  GrayScalePixels(file, *heigth, *width, pixels, original); // OK
+  GrayScalePixels(file, *heigth, *width, pixels, original, median); // OK
   WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
 
-  GaussFilter(*heigth, *width, pixels); // OK
+  *deviation = StandardDeviation(*heigth, *width, pixels, median);
+
+  GaussFilter(*heigth, *width, pixels, *median/(*deviation*3)); // OK
   WritePPM(*heigth, *width, pixels, "eye_gauss_filter.ppm");
+
+  return 0;
 
   SobelFilter(*heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_sobel_filter.ppm");

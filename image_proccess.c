@@ -1,16 +1,19 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
 #define Black 0
 #define White 255
+#define PI 3.14159265
+#define EULER 2.71828182846
 
 #include "structs.h"
 
 // Gerar matriz de pixels da imagem em escala de cinza
-void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels, PixelRGB *original) {
+void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels, PixelRGB *original, double *median) {
   PixelRGB pixelRGB, originalRGB;
   double pixel, grayRGB[3] = { 0.3, 0.59, 0.11 };
-  int code, line, col;
+  int code, line, col, sum = 0;
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
@@ -35,11 +38,32 @@ void GrayScalePixels(FILE *file, int heigth, int width, PixelRGB *pixels, PixelR
       originalRGB.g = pixel;
       originalRGB.b = pixel;
 
+      sum += pixel;
+
       *(pixels + line * width + col) = pixelRGB;
       *(original + line * width + col) = originalRGB;
     }
   }
+
+  // Retirando a média da imagem em escala de cinza para calculos futuros
+  *median = sum/(width*heigth);
 }
+
+double StandardDeviation(int heigth, int width, PixelRGB *pixels, double *median) {
+  int line, col, sum = 0;
+  int N = heigth * width;
+  PixelRGB pixel;
+
+  for(line = 0; line < heigth; line++) {
+    for(col = 0; col < width; col++) {
+      pixel = *(pixels + line*width + col);
+      sum += pow(pixel.r - *median, 2);
+    }
+  }
+
+  return sqrt(sum/(heigth*width));
+}
+
 
 // Verifica se os dois pontos estão dentro do tamanho da imagem
 int imgLimit(int pos, int x, int ref) {
@@ -65,24 +89,32 @@ void MatrixToPointer(int heigth, int width, PixelRGB res[heigth][width], PixelRG
   }
 }
 
+void gaussKernel(int heigth, int width, double *kernel, double deviation) {
+  int line, col;
+  double d2 = pow(1, 2);
+  double div = 2*PI*d2;
+  double exp;
+
+  for (line = -heigth/2; line <= heigth/2; line++) {
+    for (col = -width/2; col <= width/2; col++) {
+      exp = (pow(line, 2) + pow(col, 2))/2*d2;
+
+      *(kernel + (line+(heigth/2))*width + (col+(width/2))) = pow(EULER, -exp)/div;
+      printf("%.15lf ", *(kernel + (line+(heigth/2))*width + (col+(width/2))));
+    }
+    printf("\n");
+  }
+}
 
 // Utilizar o filtro de gauss para tirar os ruidos da imagem
-void GaussFilter(int heigth, int width, PixelRGB *pixels) {
+void GaussFilter(int heigth, int width, PixelRGB *pixels, double deviation) {
   int line, col, pixel;
   int k_line, k_col;
   PixelRGB pixelRGB, res[heigth][width];
 
-  // Kernel Gaussiano
-  int kernel[5][5] = {
-    { 1,  4,  6,  4, 1 },
-    { 4, 16, 24, 16, 4 },
-    { 6, 24, 36, 24, 6 },
-    { 4, 16, 24, 16, 4 },
-    { 1,  4,  6,  4, 1 }
-  };
+  double *kernel = malloc(sizeof(double)*5*5);
+  gaussKernel(5, 5, kernel, deviation);
 
-  // Soma dos valores do kernel [peso]
-  int gauss_weight = 256;
   int interate = 2;
 
   for (line = 0; line < heigth; line++) {
@@ -92,13 +124,18 @@ void GaussFilter(int heigth, int width, PixelRGB *pixels) {
       for(k_line = -interate; k_line < interate; k_line++ ) {
         for( k_col = -interate; k_col < interate; k_col++ ) {
           if (imgLimit(line, k_line, heigth) == 1 && imgLimit(col, k_col, width) == 1) {
-            pixelRGB = *(pixels + (line + k_line)*width + (col + k_col));
-            pixel += (pixelRGB.r)*kernel[k_line+interate][k_col+interate];
+            pixelRGB.r = (pixels + (line + k_line)*width + (col + k_col))->r;
+            pixel += (pixelRGB.r)*(*(kernel + (k_line + (2*interate)) + (k_col + (2*interate))));
           }
         }
       }
 
-      res[line][col].r = pixel/gauss_weight;
+      if (pixel > 255)
+        pixel = 255;
+      else if(pixel < 0)
+        pixel = 0;
+
+      res[line][col].r = pixel;
       res[line][col].g = res[line][col].r;
       res[line][col].b = res[line][col].r;
     }

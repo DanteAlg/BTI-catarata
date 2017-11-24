@@ -12,3 +12,5 @@
 - make normal
 - make normal2
 
+## Vale mais pontos:
+- O programa gera o próprio kernel de gauss de acordo com o desvio padrão
