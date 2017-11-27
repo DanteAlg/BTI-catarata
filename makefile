@@ -5,7 +5,7 @@ list:
 	@grep '^[^#[:space:]].*:' Makefile
 
 clean:
-	@rm catarata.dSYM
+	rm catarata
 
 test:
 	./catarata -i images/Catarata.ppm -f ppm -o diagnostico.txt

@@ -34,8 +34,6 @@ int main(int argc, char* argv[]) {
   PixelRGB *pixels = (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
   PixelRGB *original = (PixelRGB*)malloc(sizeof(PixelRGB) * (*heigth) * (*width));
 
-  free(pixels);
-
   // Processamento da matriz da imagem
 
   GrayScalePixels(file, *heigth, *width, pixels, original); // OK
