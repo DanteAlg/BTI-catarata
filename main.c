@@ -15,10 +15,6 @@
 // Argumentos em vetor de char quando inicializa o programa
 // https://stackoverflow.com/questions/2108192/what-are-the-valid-signatures-for-cs-main-function
 
-// TODO:
-// - Colocar maior peso em Hough
-// - Melhorar a média da binarização para deixar mais automatico
-// - Possivel valor de trashold aceitável para as imagens
 int main(int argc, char* argv[]) {
   if (argc != 7) {
     printf("Por favor, passe os parametros -i -f -o\n");

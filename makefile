@@ -1,5 +1,5 @@
 all:
-	gcc main.c structs.c file_methods.c image_proccess.c image_magnitude.c -o catarata -g -W
+	gcc main.c structs.c file_methods.c image_proccess.c image_magnitude.c -o catarata -g -W -lm
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
