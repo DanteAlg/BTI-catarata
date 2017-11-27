@@ -25,7 +25,7 @@ void MatrizPPM(FILE *file, int heigth, int width, int *pixels) {
 
 void WriteResults(double percent, char file_name[50]) {
   FILE* file = fopen(file_name, "w");
-  double trashold = 10;
+  double trashold = 50;
 
   if (percent > trashold) {
     fprintf(file, "a) Diagnóstico Geral: %s\n", "Com catarata");
@@ -34,7 +34,7 @@ void WriteResults(double percent, char file_name[50]) {
     fprintf(file, "a) Diagnóstico Geral: %s\n", "Sem catarata");
   }
 
-  fprintf(file, "b) Porcentagem de comprometimento: %0.2f \n", percent);
+  fprintf(file, "b) Porcentagem de comprometimento: %0.2f%%\n", percent);
 
   fclose(file);
 }

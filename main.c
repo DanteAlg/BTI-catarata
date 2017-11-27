@@ -64,9 +64,9 @@ int main(int argc, char* argv[]) {
 
   WriteResults(disease_perc, argv[6]);
 
-  // Debuggers
-  printf("X: %d Y: %d RAIO: %d\n", center->line, center->col, center->radius);
-  printf("heigth: %d, width: %d, pontos com catarata %0.2f\n", *(heigth), *(width), disease_perc);
+  // Debugger messages
+  printf("Pupila - X: %d Y: %d RAIO: %d\n", center->line, center->col, center->radius);
+  printf("Image - heigth: %d, width: %d, pontos com catarata %0.2f%%\n", *(heigth), *(width), disease_perc);
 
   return 0;
 }

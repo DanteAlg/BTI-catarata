@@ -11,7 +11,6 @@
 
 // Raio maximo pra um círculo dentro da imagem
 int maxRadius(int heigth, int width) {
-  return 90;
   if (heigth > width)
     return heigth/2;
 
@@ -82,7 +81,7 @@ HoughObj *HoughTransformation(int heigth, int width, PixelRGB *pixels) {
 double CalculateDiseasePercentual(int heigth, int width, HoughObj *center, PixelRGB *pixels) {
   int line, col, dx, dy;
   double total = 0, affected = 0;
-  int trashold = White*0.6;
+  int trashold = White*0.5;
 
   PixelRGB pixel;
 

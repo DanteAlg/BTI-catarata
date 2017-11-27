@@ -158,8 +158,11 @@ void SobelFilter(int heigth, int width, PixelRGB *pixels) {
 
 // Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)
 void Binarization(int heigth, int width, PixelRGB *pixels) {
-  int line, col, mid = 30;
+  int line, col, mid;
   PixelRGB pixel;
+
+  printf("Digite o valor de binarização para essa imagem: ");
+  scanf("%d", &mid);
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
