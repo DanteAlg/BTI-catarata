@@ -55,12 +55,7 @@ int main(int argc, char* argv[]) {
 
   // Encontrar circulos e gerar resultados
 
-  if (*heigth > *width)
-    max_radius = *heigth/2;
-  else
-    max_radius =  *width/2;
-
-  HoughObj *center = HoughTransformation(*heigth, *width, pixels, max_radius);
+  HoughObj *center = HoughTransformation(*heigth, *width, pixels);
 
   SegmentedWritePPM(*heigth, *width, *center, original, "eye_segmented.ppm");
 
