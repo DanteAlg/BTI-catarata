@@ -1,7 +1,7 @@
 # Bacharelado de TI - ITP/PTP
 
 ## Dependências
-- gcc
+- gcc 4.2
 
 ## Compilar o Código
 - make
