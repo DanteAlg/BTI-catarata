@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
 
   int h, w;
   int *heigth = &h, *width = &w;
+  int aux, max_radius;
   char file_name[50], file_format[10];
   FILE* file;
 
@@ -39,12 +40,10 @@ int main(int argc, char* argv[]) {
   GrayScalePixels(file, *heigth, *width, pixels, original); // OK
   WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
 
-  int count;
-
   // Quanto mais borrado a imagem melhor fica depois do sobel
   // Estou passando gauss várias vezes por não ter tido tempo de fazer o código
   // que descobre um desvio padrão que faça um gauss mais prático.
-  for (count = 0; count < 10; count++)
+  for (aux = 0; aux < 10; aux++)
     GaussFilter(*heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_gauss_filter.ppm");
 
@@ -56,7 +55,12 @@ int main(int argc, char* argv[]) {
 
   // Encontrar circulos e gerar resultados
 
-  HoughObj *center = HoughTransformation(*heigth, *width, pixels);
+  if (*heigth > *width)
+    max_radius = *heigth/2;
+  else
+    max_radius =  *width/2;
+
+  HoughObj *center = HoughTransformation(*heigth, *width, pixels, max_radius);
 
   SegmentedWritePPM(*heigth, *width, *center, original, "eye_segmented.ppm");
 

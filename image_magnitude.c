@@ -9,14 +9,6 @@
 #include "structs.h"
 #include "image_proccess.h"
 
-// Raio maximo pra um círculo dentro da imagem
-int maxRadius(int heigth, int width) {
-  if (heigth > width)
-    return heigth/2;
-
-  return width/2;
-}
-
 HoughObj *maiorValor(int *hough, int heigth, int width, int min_radius, int max_radius) {
   int line, col, maior, radius, rad;
   HoughObj *center = malloc(sizeof(HoughObj));
@@ -41,11 +33,10 @@ HoughObj *maiorValor(int *hough, int heigth, int width, int min_radius, int max_
 }
 
 // Verificar as formas circulares do olho
-HoughObj *HoughTransformation(int heigth, int width, PixelRGB *pixels) {
+HoughObj *HoughTransformation(int heigth, int width, PixelRGB *pixels, int max_radius) {
   int line, col, theta, radius, hough_x, hough_y;
   // Para cada pixel verificar se forma um possivel círculo,
   // verificar do raio min ao max
-  int max_radius = maxRadius(heigth, width);
   int min_radius = 70;
 
   // Inicializar o espaço de hough com valores zerados
