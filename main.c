@@ -39,7 +39,13 @@ int main(int argc, char* argv[]) {
   GrayScalePixels(file, *heigth, *width, pixels, original); // OK
   WritePPM(*heigth, *width, pixels, "eye_grayscale.ppm");
 
-  GaussFilter(*heigth, *width, pixels); // OK
+  int count;
+
+  // Quanto mais borrado a imagem melhor fica depois do sobel
+  // Estou passando gauss várias vezes por não ter tido tempo de fazer o código
+  // que descobre um desvio padrão que faça um gauss mais prático.
+  for (count = 0; count < 10; count++)
+    GaussFilter(*heigth, *width, pixels); // OK
   WritePPM(*heigth, *width, pixels, "eye_gauss_filter.ppm");
 
   SobelFilter(*heigth, *width, pixels); // OK

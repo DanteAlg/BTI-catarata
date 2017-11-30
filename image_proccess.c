@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #define Black 0
 #define White 255
@@ -90,8 +91,8 @@ void GaussFilter(int heigth, int width, PixelRGB *pixels) {
     for (col = 0; col < width; col++) {
       pixel = 0;
 
-      for(k_line = -interate; k_line < interate; k_line++ ) {
-        for( k_col = -interate; k_col < interate; k_col++ ) {
+      for(k_line = -interate; k_line <= interate; k_line++ ) {
+        for( k_col = -interate; k_col <= interate; k_col++ ) {
           if (imgLimit(line, k_line, heigth) == 1 && imgLimit(col, k_col, width) == 1) {
             pixelRGB = *(pixels + (line + k_line)*width + (col + k_col));
             pixel += (pixelRGB.r)*kernel[k_line+interate][k_col+interate];
@@ -111,22 +112,17 @@ void GaussFilter(int heigth, int width, PixelRGB *pixels) {
 }
 
 // Aplica a covulação no pixel para o calculo de Sobel
-int sobelCovulation(int sobel_v[3][3], int x, int y, int width, PixelRGB *pixels) {
+int sobelCovulation(int sobel_v[3][3], int x, int y, int heigth, int width, PixelRGB *pixels) {
   PixelRGB pixel;
-  int l, c, res = 0;
+  int k_line, k_col, res = 0;
+  int interate = 1;
 
-  // Apenas localiza os pixels RGB
-  PixelRGB area[3][3] = {
-    { *(pixels + (x - 1)*width + y - 1), *(pixels + x*width + y - 1), *(pixels + (x + 1)*width + y - 1) },
-    { *(pixels + (x - 1)*width + y), *(pixels + x*width + y), *(pixels + (x + 1)*width + y) },
-    { *(pixels + (x - 1)*width + y + 1), *(pixels + x*width + y + 1), *(pixels + (x + 1)*width + y + 1) }
-  };
-
-  for (l = 0; l < 3; l++) {
-    for (c = 0; c < 3; c++) {
-      pixel = area[l][c];
-
-      res += sobel_v[l][c]*pixel.r;
+  for(k_line = -interate; k_line <= interate; k_line++ ) {
+    for( k_col = -interate; k_col <= interate; k_col++ ) {
+      if (imgLimit(x, k_line, heigth) == 1 && imgLimit(y, k_col, width) == 1) {
+        pixel = *(pixels + (x + k_line)*width + (y + k_col));
+        res += sobel_v[k_line + interate][k_col + interate] * pixel.r;
+      }
     }
   }
 
@@ -136,18 +132,34 @@ int sobelCovulation(int sobel_v[3][3], int x, int y, int width, PixelRGB *pixels
 // Filtro de sobel para realsar as arestas
 // https://stackoverflow.com/questions/17815687/image-processing-implementing-sobel-filter
 void SobelFilter(int heigth, int width, PixelRGB *pixels) {
-  int sobel_x[3][3] = { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } },
-      sobel_y[3][3] = { {1, 2, 1 }, { 0, 0, 0}, { -1, -2, -1 } };
+  int sobel_x[3][3] = {
+      { -1, 0, 1 },
+      { -2, 0, 2 },
+      { -1, 0, 1 }
+    };
+  int sobel_y[3][3] = {
+    { 1, 2, 1 },
+    { 0, 0, 0 },
+    { -1, -2, -1 }
+  };
 
   int line, col, sc, pixelX, pixelY;
   PixelRGB res[heigth][width];
 
-  for (line = 1; line < (heigth - 2); line++) {
-    for (col = 1; col < (width - 2); col++) {
-      pixelX = sobelCovulation(sobel_x, line, col, width, pixels);
-      pixelY = sobelCovulation(sobel_y, line, col, width, pixels);
+  for (line = 0; line < heigth; line++) {
+    for (col = 0; col < width; col++) {
+      pixelX = sobelCovulation(sobel_x, line, col, heigth, width, pixels);
+      pixelY = sobelCovulation(sobel_y, line, col, heigth, width, pixels);
 
       res[line][col].r = ceil(sqrt(pow(pixelX, 2) + pow(pixelY, 2)));
+
+      if (res[line][col].r > 255) {
+        res[line][col].r = 255;
+      }
+      else if (res[line][col].r < 0) {
+        res[line][col].r = 0;
+      }
+
       res[line][col].g = res[line][col].r;
       res[line][col].b = res[line][col].r;
     }
@@ -158,17 +170,17 @@ void SobelFilter(int heigth, int width, PixelRGB *pixels) {
 
 // Binarização de imagem (dividir pixels em dois grupos e contonar as linhas)
 void Binarization(int heigth, int width, PixelRGB *pixels) {
-  int line, col, mid;
+  int line, col, threshold;
   PixelRGB pixel;
 
-  printf("Digite o valor de binarização para essa imagem: ");
-  scanf("%d", &mid);
+  printf("Digite o valor de binarização: ");
+  scanf("%d", &threshold);
 
   for (line = 0; line < heigth; line++) {
     for (col = 0; col < width; col++) {
       pixel = *(pixels + line * width + col);
 
-      if (pixel.r > mid) {
+      if (pixel.r > threshold) {
         pixel.r = White;
         pixel.g = White;
         pixel.b = White;
